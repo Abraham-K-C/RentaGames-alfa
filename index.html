@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GamesRental — Sistemas Distribuidos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0f1117;--surface:#161b22;--surface2:#1c2128;--border:#30363d;
+      --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;
+      --text:#e6edf3;--muted:#8b949e;--code-bg:#161b22;
+    }
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    code,pre{font-family:'Fira Code',monospace}
+
+    /* LAYOUT */
+    .layout{display:flex;min-height:100vh}
+    .sidebar{width:260px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto;padding:24px 0}
+    .main{flex:1;max-width:960px;margin:0 auto;padding:48px 40px}
+
+    /* SIDEBAR */
+    .brand{display:flex;align-items:center;gap:12px;padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+    .brand-icon{font-size:28px}
+    .brand-name{font-size:16px;font-weight:700;color:var(--text)}
+    .brand-sub{font-size:11px;color:var(--muted)}
+    .nav-section{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:8px 20px 4px}
+    .nav-link{display:block;padding:6px 20px;font-size:13px;color:var(--muted);border-left:2px solid transparent;transition:all .15s}
+    .nav-link:hover,.nav-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,.06);text-decoration:none}
+
+    /* HERO */
+    .hero{border-bottom:1px solid var(--border);padding-bottom:40px;margin-bottom:48px}
+    .hero-eyebrow{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+    .hero h1{font-size:42px;font-weight:800;color:var(--text);line-height:1.1;margin-bottom:16px}
+    .hero p{font-size:16px;color:var(--muted);max-width:680px;line-height:1.7;margin-bottom:20px}
+    .tag-row{display:flex;flex-wrap:wrap;gap:8px}
+    .tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid}
+    .tag-blue{background:rgba(88,166,255,.1);border-color:rgba(88,166,255,.4);color:#58a6ff}
+    .tag-green{background:rgba(63,185,80,.1);border-color:rgba(63,185,80,.4);color:#3fb950}
+    .tag-orange{background:rgba(247,129,0,.1);border-color:rgba(247,129,0,.4);color:#f78600}
+    .tag-red{background:rgba(247,129,102,.1);border-color:rgba(247,129,102,.4);color:#f78166}
+    .tag-purple{background:rgba(210,168,255,.1);border-color:rgba(210,168,255,.4);color:#d2a8ff}
+
+    /* SECTIONS */
+    section{margin-bottom:56px}
+    h2{font-size:24px;font-weight:700;color:var(--text);margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+    h3{font-size:16px;font-weight:600;color:var(--text);margin:24px 0 10px}
+    p{color:var(--muted);margin-bottom:12px;font-size:14px}
+
+    /* CARDS */
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:20px 0}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;transition:border-color .2s}
+    .card:hover{border-color:var(--accent)}
+    .card-icon{font-size:22px;margin-bottom:8px}
+    .card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+    .card-value{font-size:20px;font-weight:700;color:var(--text);margin:2px 0}
+    .card-desc{font-size:12px;color:var(--muted)}
+
+    /* TABLE */
+    .table-wrap{overflow-x:auto;margin:16px 0}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{background:var(--surface2);color:var(--muted);font-weight:600;text-align:left;padding:10px 14px;border:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+    td{padding:10px 14px;border:1px solid var(--border);color:var(--text);vertical-align:top}
+    tr:hover td{background:var(--surface2)}
+    .badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block}
+    .badge-green{background:rgba(63,185,80,.15);color:#3fb950}
+    .badge-blue{background:rgba(88,166,255,.15);color:#58a6ff}
+    .badge-orange{background:rgba(247,129,0,.15);color:#f78600}
+    .badge-purple{background:rgba(210,168,255,.15);color:#d2a8ff}
+    .badge-red{background:rgba(247,129,102,.15);color:#f78166}
+
+    /* CODE */
+    .code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:12px 0;overflow-x:auto}
+    .code-block pre{font-size:13px;color:#e6edf3;line-height:1.7}
+    .code-header{background:var(--surface2);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:8px 16px;font-size:12px;color:var(--muted);font-family:'Fira Code',monospace}
+    .code-header+.code-block{border-radius:0 0 8px 8px;margin-top:0}
+
+    /* INFO BOX */
+    .info-box{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text)}
+    .warn-box{background:rgba(247,129,0,.06);border:1px solid rgba(247,129,0,.3);border-radius:8px;padding:16px 20px;margin:16px 0;font-size:14px;color:var(--text)}
+
+    /* ARCH DIAGRAM */
+    .arch{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin:16px 0;font-family:'Fira Code',monospace;font-size:12px;line-height:1.9;color:#8b949e;overflow-x:auto}
+    .arch .layer{color:#58a6ff;font-weight:600}
+    .arch .svc{color:#3fb950}
+    .arch .infra{color:#f78600}
+    .arch .arrow{color:#8b949e}
+
+    /* STEP */
+    .steps{counter-reset:step;display:flex;flex-direction:column;gap:12px;margin:16px 0}
+    .step{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+    .step-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0f1117;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .step-content h4{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+    .step-content p{margin:0;font-size:13px}
+
+    @media(max-width:768px){.layout{flex-direction:column}.sidebar{width:100%;height:auto;position:relative}.main{padding:24px 16px}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="brand">
+      <span class="brand-icon">🎮</span>
+      <div>
+        <div class="brand-name">GamesRental</div>
+        <div class="brand-sub">Documentación · v1.0</div>
+      </div>
+    </div>
+    <span class="nav-section">General</span>
+    <a href="#overview" class="nav-link active">Visión General</a>
+    <a href="#arquitectura" class="nav-link">Arquitectura</a>
+    <span class="nav-section">Backend</span>
+    <a href="#infraestructura" class="nav-link">Infraestructura</a>
+    <a href="#microservicios" class="nav-link">Microservicios</a>
+    <a href="#apis" class="nav-link">API Endpoints</a>
+    <span class="nav-section">Frontend</span>
+    <a href="#frontend" class="nav-link">Stack Frontend</a>
+    <a href="#vistas" class="nav-link">Vistas y Roles</a>
+    <a href="#estado" class="nav-link">Estado Global</a>
+    <span class="nav-section">Operaciones</span>
+    <a href="#observabilidad" class="nav-link">Observabilidad</a>
+    <a href="#flujos" class="nav-link">Flujos de Negocio</a>
+    <a href="#arranque" class="nav-link">Guía de Arranque</a>
+    <a href="#puertos" class="nav-link">Referencia de Puertos</a>
+    <a href="#credenciales" class="nav-link">Accesos Demo</a>
+  </nav>
+
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">Sistemas Distribuidos · Proyecto Final</div>
+      <h1>GamesRental</h1>
+      <p>Plataforma de distribución de videojuegos construida sobre una arquitectura de microservicios con Spring Boot, Spring Cloud Eureka, API Gateway, React 18 y stack de observabilidad Prometheus + Grafana. Inspirada en la experiencia de Steam / Epic Games.</p>
+      <div class="tag-row">
+        <span class="tag tag-blue">React 18</span>
+        <span class="tag tag-green">Spring Boot</span>
+        <span class="tag tag-orange">Spring Cloud</span>
+        <span class="tag tag-purple">Zustand</span>
+        <span class="tag tag-red">Prometheus</span>
+        <span class="tag tag-blue">Grafana 13</span>
+        <span class="tag tag-green">Eureka</span>
+        <span class="tag tag-orange">H2 Database</span>
+        <span class="tag tag-purple">Vite 5</span>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <h2>Visión General</h2>
+      <p>GamesRental es un sistema distribuido end-to-end que simula una plataforma comercial de videojuegos. Cada dominio de negocio está encapsulado en su propio microservicio independiente con base de datos propia, y el frontend consume todos los servicios a través de un proxy que en producción apunta al API Gateway.</p>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🧩</div><div class="card-label">Microservicios</div><div class="card-value">10</div><div class="card-desc">Servicios Spring Boot independientes</div></div>
+        <div class="card"><div class="card-icon">🖥️</div><div class="card-label">Frontend</div><div class="card-value">React 18</div><div class="card-desc">SPA con Vite 5 + Zustand</div></div>
+        <div class="card"><div class="card-icon">🔀</div><div class="card-label">Gateway</div><div class="card-value">:8080</div><div class="card-desc">Punto único de acceso</div></div>
+        <div class="card"><div class="card-icon">🔍</div><div class="card-label">Descubrimiento</div><div class="card-value">Eureka</div><div class="card-desc">Registro dinámico de servicios</div></div>
+        <div class="card"><div class="card-icon">📊</div><div class="card-label">Observabilidad</div><div class="card-value">Grafana</div><div class="card-desc">Prometheus + Grafana 13</div></div>
+        <div class="card"><div class="card-icon">👥</div><div class="card-label">Roles</div><div class="card-value">2</div><div class="card-desc">Administrador y Usuario</div></div>
+      </div>
+      <div class="info-box">
+        <strong>Producto del curso:</strong> Sistema distribuido de microservicios end-to-end, configurable, escalable, observable e integrado con frontend — ejecutable de forma reproducible en desarrollo local.
+      </div>
+    </section>
+
+    <!-- ARQUITECTURA -->
+    <section id="arquitectura">
+      <h2>Arquitectura</h2>
+      <p>El sistema sigue el patrón de microservicios con capas de infraestructura (discovery + gateway), servicios de negocio y un cliente frontend desacoplado.</p>
+      <div class="arch">
+<span class="layer">┌─────────────────────────────────────────────────────────────┐</span>
+<span class="layer">│                        CLIENTE                              │</span>
+<span class="layer">│         React SPA :5173  (Vite proxy → Gateway)             │</span>
+<span class="layer">└───────────────────────────┬─────────────────────────────────┘</span>
+                            <span class="arrow">│ HTTP</span>
+<span class="infra">┌───────────────────────────▼─────────────────────────────────┐</span>
+<span class="infra">│              API GATEWAY  :8080                             │</span>
+<span class="infra">│         Enrutamiento · Load Balancing · CORS                │</span>
+<span class="infra">└──┬────────────────────────────────────────────────────────┬─┘</span>
+   <span class="arrow">│ Eureka Client                              │</span>
+<span class="infra">┌──▼────────────────────┐</span>   <span class="arrow">│</span>
+<span class="infra">│  SERVICE DISCOVERY    │</span>   <span class="arrow">│ Rutas /api/*</span>
+<span class="infra">│     Eureka  :8761     │</span>   <span class="arrow">│</span>
+<span class="infra">└───────────────────────┘</span>   <span class="arrow">│</span>
+<span class="layer">┌───────────────────────────▼─────────────────────────────────┐</span>
+<span class="layer">│                   MICROSERVICIOS DE NEGOCIO                 │</span>
+<span class="svc">│  usuario:8081  analitica:8082  biblioteca:8083              │</span>
+<span class="svc">│  catalogo:8084  notificaciones:8085  ofertas:8086           │</span>
+<span class="svc">│  pagos:8087  renta:8088  resenas:8089  soporte:8090         │</span>
+<span class="layer">└─────────────────────────────────────────────────────────────┘</span>
+<span class="layer">┌─────────────────────────────────────────────────────────────┐</span>
+<span class="layer">│                    OBSERVABILIDAD                           │</span>
+<span class="infra">│          Prometheus (scrape /actuator/prometheus)           │</span>
+<span class="infra">│          Grafana :3000 — dashboards y alertas               │</span>
+<span class="layer">└─────────────────────────────────────────────────────────────┘</span>
+      </div>
+
+      <h3>Patrón por microservicio</h3>
+      <p>Cada uno de los 10 microservicios sigue exactamente la misma estructura interna:</p>
+      <div class="code-block"><pre>src/main/java/com/gamesrentall/{servicio}/
+├── controller/    ← REST Controller (@RequestMapping("/api/{servicio}"))
+├── entity/        ← JPA Entity
+├── repository/    ← JpaRepository
+└── service/       ← Lógica de negocio
+
+src/main/resources/
+└── application.yml  ← Puerto, datasource H2, Eureka, Actuator</pre></div>
+    </section>
+
+    <!-- INFRAESTRUCTURA -->
+    <section id="infraestructura">
+      <h2>Infraestructura</h2>
+
+      <h3>Servicio Discovery — Eureka</h3>
+      <p>Todos los microservicios se registran automáticamente en Eureka al arrancar. El Gateway resuelve las rutas por nombre de servicio (no IP fija), lo que permite escalar instancias sin reconfiguración.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Propiedad</th><th>Valor</th></tr>
+          <tr><td>Puerto</td><td><code>8761</code></td></tr>
+          <tr><td>Dashboard</td><td><a href="http://localhost:8761">http://localhost:8761</a></td></tr>
+          <tr><td>defaultZone</td><td><code>http://localhost:8761/eureka/</code></td></tr>
+          <tr><td>Ubicación</td><td><code>servicio-discovery/</code></td></tr>
+        </table>
+      </div>
+
+      <h3>API Gateway</h3>
+      <p>Punto único de entrada del sistema. Enruta las peticiones al microservicio correcto usando el nombre registrado en Eureka y aplica balanceo de carga automático.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Propiedad</th><th>Valor</th></tr>
+          <tr><td>Puerto</td><td><code>8080</code></td></tr>
+          <tr><td>Ubicación</td><td><code>servicio-gateway/</code></td></tr>
+          <tr><td>Patrón de ruta</td><td><code>/api/{servicio}/**</code> → <code>lb://nombre-servicio</code></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- MICROSERVICIOS -->
+    <section id="microservicios">
+      <h2>Microservicios</h2>
+      <p>10 servicios independientes, cada uno con su propia base de datos H2 embebida y registrado en Eureka. Todos exponen métricas en <code>/actuator/prometheus</code>.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Servicio</th><th>Puerto</th><th>Base Path</th><th>Dominio</th></tr>
+          <tr><td><span class="badge badge-blue">usuario-service</span></td><td><code>8081</code></td><td><code>/api/usuarios</code></td><td>Gestión de usuarios y autenticación</td></tr>
+          <tr><td><span class="badge badge-purple">analitica-service</span></td><td><code>8082</code></td><td><code>/api/analitica</code></td><td>Métricas y reportes de actividad</td></tr>
+          <tr><td><span class="badge badge-green">biblioteca-service</span></td><td><code>8083</code></td><td><code>/api/biblioteca</code></td><td>Biblioteca personal de juegos por usuario</td></tr>
+          <tr><td><span class="badge badge-blue">catalogo-service</span></td><td><code>8084</code></td><td><code>/api/catalogo</code></td><td>Catálogo global de videojuegos (CRUD)</td></tr>
+          <tr><td><span class="badge badge-orange">notificaciones-service</span></td><td><code>8085</code></td><td><code>/api/notificaciones</code></td><td>Sistema de notificaciones</td></tr>
+          <tr><td><span class="badge badge-red">ofertas-service</span></td><td><code>8086</code></td><td><code>/api/ofertas</code></td><td>Descuentos con expiración por tiempo</td></tr>
+          <tr><td><span class="badge badge-green">pagos-service</span></td><td><code>8087</code></td><td><code>/api/pagos</code></td><td>Procesamiento de pagos y transacciones</td></tr>
+          <tr><td><span class="badge badge-blue">renta-service</span></td><td><code>8088</code></td><td><code>/api/renta</code></td><td>Gestión de rentas y alquileres</td></tr>
+          <tr><td><span class="badge badge-purple">resenas-service</span></td><td><code>8089</code></td><td><code>/api/resenas</code></td><td>Reseñas y valoraciones 1-5 estrellas</td></tr>
+          <tr><td><span class="badge badge-orange">soporte-service</span></td><td><code>8090</code></td><td><code>/api/soporte</code></td><td>Tickets de soporte y reembolsos</td></tr>
+        </table>
+      </div>
+      <div class="info-box">
+        Cada servicio persiste datos en <code>./data/{nombre}_db.mv.db</code> (H2 file mode). No requiere instalación de base de datos externa.
+      </div>
+    </section>
+
+    <!-- API ENDPOINTS -->
+    <section id="apis">
+      <h2>API Endpoints</h2>
+      <p>Todos los servicios siguen el mismo patrón REST. Operaciones CRUD estándar más un endpoint de prueba.</p>
+      <div class="code-header">Patrón común (ejemplo: catalogo-service)</div>
+      <div class="code-block"><pre>GET    /api/catalogo        → Listar todos los juegos
+GET    /api/catalogo/{id}   → Buscar por ID
+POST   /api/catalogo        → Crear juego (body: JSON)
+PUT    /api/catalogo/{id}   → Actualizar juego
+DELETE /api/catalogo/{id}   → Eliminar juego
+GET    /api/catalogo/test   → Health check del servicio</pre></div>
+
+      <h3>Endpoints específicos por dominio</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Servicio</th><th>Endpoint adicional</th><th>Descripción</th></tr>
+          <tr><td>usuarios</td><td><code>GET /api/usuarios/test</code></td><td>Verifica que el servicio está activo</td></tr>
+          <tr><td>biblioteca</td><td><code>POST /api/biblioteca</code></td><td>Agrega juego a la biblioteca del usuario</td></tr>
+          <tr><td>pagos</td><td><code>PUT /api/pagos/{id}</code></td><td>Actualiza estado de pago (ej. reembolsado)</td></tr>
+          <tr><td>soporte</td><td><code>PUT /api/soporte/{id}</code></td><td>Actualiza estado del ticket de soporte</td></tr>
+          <tr><td>ofertas</td><td><code>POST /api/ofertas</code></td><td>Crea oferta con porcentaje y expiración</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- FRONTEND -->
+    <section id="frontend">
+      <h2>Stack Frontend</h2>
+      <p>Single Page Application con diseño gaming modo oscuro inspirado en Steam y Epic Games Launcher. Funciona con datos mock en desarrollo y se conecta a los microservicios vía proxy Vite.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Tecnología</th><th>Versión</th><th>Rol</th></tr>
+          <tr><td>React</td><td>18.3.1</td><td>Framework UI</td></tr>
+          <tr><td>Vite</td><td>5.4.21</td><td>Build tool + dev server con proxy</td></tr>
+          <tr><td>Zustand</td><td>4.5.7</td><td>Estado global (auth, games, pagos, tickets)</td></tr>
+          <tr><td>React Router DOM</td><td>6.30.4</td><td>Enrutamiento SPA protegido por rol</td></tr>
+          <tr><td>CSS Modules</td><td>—</td><td>Estilos encapsulados por componente</td></tr>
+        </table>
+      </div>
+
+      <h3>Estructura de archivos</h3>
+      <div class="code-block"><pre>frontend/src/
+├── pages/
+│   ├── admin/
+│   │   ├── AdminDashboard.jsx      ← Hub principal admin (sidebar)
+│   │   ├── AdminUsers.jsx          ← CRUD usuarios + historial cruzado
+│   │   ├── AdminCatalog.jsx        ← CRUD catálogo de juegos
+│   │   ├── AdminOffers.jsx         ← Ofertas con countdown en tiempo real
+│   │   ├── AdminReviews.jsx        ← Monitoreo global de reseñas
+│   │   ├── AdminPaymentsGlobal.jsx ← Dashboard financiero global
+│   │   └── AdminSupport.jsx        ← Chat de soporte + aprobar reembolsos
+│   ├── user/
+│   │   ├── UserDashboard.jsx       ← Hub principal usuario (header nav)
+│   │   ├── StorePage.jsx           ← Tienda con filtros y ofertas activas
+│   │   ├── LibraryPage.jsx         ← Biblioteca visual estilo Steam
+│   │   ├── PaymentsPage.jsx        ← Historial de transacciones
+│   │   ├── GameDetail.jsx          ← Detalle + reseñas CRUD
+│   │   └── UserSupport.jsx         ← Crear tickets + historial
+│   └── LoginPage.jsx               ← Login con partículas animadas
+├── components/shared/
+│   ├── PaymentGateway.jsx          ← Pasarela Tarjeta / Yape / Plin
+│   ├── ServiceStatus.jsx           ← Indicador salud microservicios
+│   ├── Modal.jsx                   ← Modal reutilizable
+│   ├── ConfirmDialog.jsx           ← Diálogo de confirmación
+│   └── Toast.jsx                   ← Notificaciones flotantes
+├── store/useStore.js               ← Zustand store completo
+├── services/api.js                 ← Cliente HTTP con proxy routing
+├── hooks/useCountdown.js           ← Countdown para expiración de ofertas
+└── data/mockData.js                ← Datos de prueba para desarrollo</pre></div>
+
+      <h3>Proxy de desarrollo (Vite)</h3>
+      <p>Vite redirige las peticiones <code>/api/*</code> directamente a cada microservicio, evitando CORS durante el desarrollo.</p>
+      <div class="code-block"><pre>'/api/usuarios'       → http://localhost:8081
+'/api/analitica'      → http://localhost:8082
+'/api/biblioteca'     → http://localhost:8083
+'/api/catalogo'       → http://localhost:8084
+'/api/notificaciones' → http://localhost:8085
+'/api/ofertas'        → http://localhost:8086
+'/api/pagos'          → http://localhost:8087
+'/api/renta'          → http://localhost:8088
+'/api/resenas'        → http://localhost:8089
+'/api/soporte'        → http://localhost:8090</pre></div>
+    </section>
+
+    <!-- VISTAS Y ROLES -->
+    <section id="vistas">
+      <h2>Vistas y Roles</h2>
+
+      <h3>Panel Administrador</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Sección</th><th>Descripción</th><th>Microservicio</th></tr>
+          <tr><td>👥 Usuarios</td><td>Crear, editar, banear usuarios. Ver historial cruzado (biblioteca + reseñas + pagos)</td><td>usuario, biblioteca, resenas, pagos</td></tr>
+          <tr><td>🎮 Catálogo</td><td>CRUD completo de videojuegos con imágenes y tags</td><td>catalogo</td></tr>
+          <tr><td>🏷️ Ofertas</td><td>Descuentos con countdown en tiempo real. Al expirar el juego vuelve a precio original</td><td>ofertas</td></tr>
+          <tr><td>⭐ Reseñas</td><td>Vista de monitoreo global de todas las reseñas. Solo lectura para el admin</td><td>resenas</td></tr>
+          <tr><td>💰 Finanzas</td><td>Ingresos totales, transacciones, ticket promedio, breakdown por método de pago</td><td>pagos</td></tr>
+          <tr><td>🎫 Soporte</td><td>KPIs, tabla de tickets, chat en tiempo real, aprobación de reembolsos</td><td>soporte</td></tr>
+        </table>
+      </div>
+
+      <h3>Panel Usuario (estilo Steam)</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Sección</th><th>Descripción</th><th>Microservicio</th></tr>
+          <tr><td>🏪 Tienda</td><td>Catálogo con búsqueda, filtro por género y precios con ofertas activas</td><td>catalogo, ofertas</td></tr>
+          <tr><td>📚 Biblioteca</td><td>Grid visual de juegos adquiridos. Solo accesible después de compra</td><td>biblioteca</td></tr>
+          <tr><td>💳 Pagos</td><td>Historial de transacciones propias con monto y método</td><td>pagos</td></tr>
+          <tr><td>🎫 Soporte</td><td>Crear tickets (Yape/Plin, Error técnico, Reembolso) con adjunto drag&amp;drop</td><td>soporte</td></tr>
+        </table>
+      </div>
+
+      <h3>Flujo de reembolso (regla de negocio crítica)</h3>
+      <div class="info-box">
+        Cuando el admin aprueba un reembolso desde el panel de soporte, el sistema ejecuta 3 cambios simultáneos:
+        <ol style="margin-top:8px;padding-left:20px;color:#e6edf3">
+          <li>Ticket → estado <strong>Resuelto</strong></li>
+          <li>Pago → badge cambia de <em>completado</em> a <em>reembolsado</em> y se resta del total de ingresos</li>
+          <li>Juego se elimina de la <strong>Biblioteca</strong> del usuario afectado</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ESTADO GLOBAL -->
+    <section id="estado">
+      <h2>Estado Global (Zustand)</h2>
+      <p>El store centraliza toda la lógica de la aplicación. En desarrollo trabaja con mock data; en producción cada acción también llama al microservicio correspondiente.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Slice</th><th>Acciones principales</th></tr>
+          <tr><td>Auth</td><td><code>login()</code>, <code>logout()</code> — retorna rol para redirección</td></tr>
+          <tr><td>Games</td><td><code>addGame()</code>, <code>updateGame()</code>, <code>deleteGame()</code></td></tr>
+          <tr><td>Users</td><td><code>addUser()</code>, <code>updateUser()</code>, <code>banUser()</code>, <code>deleteUser()</code></td></tr>
+          <tr><td>Offers</td><td><code>addOffer()</code>, <code>expireOffer()</code>, <code>getEffectivePrice()</code></td></tr>
+          <tr><td>Library</td><td><code>buyGame(method)</code> — crea pago + agrega a biblioteca</td></tr>
+          <tr><td>Reviews</td><td><code>addReview()</code>, <code>updateReview()</code>, <code>deleteReview()</code></td></tr>
+          <tr><td>Tickets</td><td><code>addTicket()</code>, <code>addTicketMessage()</code>, <code>approveRefund()</code></td></tr>
+          <tr><td>Payments</td><td>Solo lectura + <code>approveRefund()</code> cambia status a <em>reembolsado</em></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- OBSERVABILIDAD -->
+    <section id="observabilidad">
+      <h2>Observabilidad</h2>
+      <p>Cada microservicio expone métricas en <code>/actuator/prometheus</code>. Prometheus las recolecta y Grafana las visualiza en dashboards.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Componente</th><th>Versión</th><th>Puerto</th><th>Rol</th></tr>
+          <tr><td>Prometheus</td><td>3.12.0</td><td>9090</td><td>Recolección de métricas</td></tr>
+          <tr><td>Grafana</td><td>13.0.1</td><td>3000</td><td>Dashboards y visualización</td></tr>
+        </table>
+      </div>
+      <h3>Ubicación de archivos</h3>
+      <div class="code-block"><pre>_observabilidad/
+├── prometheus/
+│   ├── prometheus.yml                     ← Configuración scrape
+│   └── prometheus-3.12.0.windows-amd64/  ← Binario Windows
+├── grafana/
+│   └── grafana-13.0.1+security-01/       ← Binario Grafana
+└── logs/
+    └── servicio-gateway.log
+
+microservicios/_observabilidad/logs/
+├── catalogo-service.log
+├── usuario-service.log
+└── ...  (un log por servicio)</pre></div>
+      <div class="warn-box">
+        Los scripts <code>.bat</code> en <code>_observabilidad/</code> permiten arrancar, apagar y buscar en logs de cada servicio desde la consola.
+      </div>
+    </section>
+
+    <!-- FLUJOS -->
+    <section id="flujos">
+      <h2>Flujos de Negocio</h2>
+
+      <h3>Flujo de compra de un juego</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-content"><h4>Usuario navega la tienda</h4><p>StorePage consume <code>GET /api/catalogo</code> y <code>GET /api/ofertas</code> para mostrar precios con descuentos activos y sus countdowns.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content"><h4>Selecciona método de pago</h4><p>PaymentGateway muestra tres opciones: Tarjeta de Crédito/Débito (con validación de campos), Yape (QR simulado + código) y Plin (identidad visual propia).</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content"><h4>Procesamiento del pago</h4><p><code>POST /api/pagos</code> con el monto efectivo (aplicando descuento si hay oferta activa). El servicio registra la transacción.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-content"><h4>Juego pasa a la biblioteca</h4><p><code>POST /api/biblioteca</code> agrega la entrada. El estado Zustand se actualiza de forma optimista y el juego aparece inmediatamente en Biblioteca.</p></div></div>
+      </div>
+
+      <h3>Flujo de reseña</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-content"><h4>Validación de propiedad</h4><p>El botón de reseña solo se habilita si el juego está en la biblioteca del usuario (<code>libraryIds.includes(gameId)</code>). Si no lo tiene, ve el mensaje de bloqueo.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content"><h4>Publicación</h4><p>El usuario selecciona estrellas (1-5) y escribe su texto. <code>POST /api/resenas</code>. Solo puede publicar una reseña por juego.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content"><h4>Gestión propia</h4><p>El usuario puede editar o eliminar su propia reseña. No puede modificar las de otros. El admin solo puede monitorearlas, no alterarlas.</p></div></div>
+      </div>
+    </section>
+
+    <!-- ARRANQUE -->
+    <section id="arranque">
+      <h2>Guía de Arranque (DEV)</h2>
+      <div class="warn-box">Ejecutar en este orden exacto. Cada paso depende del anterior.</div>
+
+      <h3>Paso 1 — Observabilidad</h3>
+      <div class="code-block"><pre>.\1-iniciar-observabilidad.bat</pre></div>
+      <p>Levanta Prometheus (recolección de métricas) y Grafana (dashboards).</p>
+
+      <h3>Paso 2 — Infraestructura</h3>
+      <div class="code-block"><pre>.\2-iniciar-infraestructura.bat</pre></div>
+      <p>Arranca Eureka Service Discovery (:8761) y el API Gateway (:8080).</p>
+
+      <h3>Paso 3 — Microservicios</h3>
+      <div class="code-block"><pre>.\3-iniciar-microservicios.bat</pre></div>
+      <p>Levanta los 10 microservicios (puertos 8081–8090). Cada uno se registra en Eureka automáticamente.</p>
+
+      <h3>Paso 4 — Frontend</h3>
+      <div class="code-block"><pre>cd frontend
+npm install
+npm run dev</pre></div>
+      <p>Arranca el servidor de desarrollo React en <a href="http://localhost:5173">http://localhost:5173</a>.</p>
+
+      <div class="info-box">
+        El frontend funciona completamente con datos mock sin necesidad de los microservicios. Para verificar la conexión real, usar el indicador <strong>"Servicios"</strong> en la barra de navegación y hacer clic en "Revisar".
+      </div>
+    </section>
+
+    <!-- PUERTOS -->
+    <section id="puertos">
+      <h2>Referencia de Puertos</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Servicio</th><th>Puerto</th><th>URL</th></tr>
+          <tr><td>Frontend React</td><td>5173</td><td><a href="http://localhost:5173">http://localhost:5173</a></td></tr>
+          <tr><td>API Gateway</td><td>8080</td><td><a href="http://localhost:8080">http://localhost:8080</a></td></tr>
+          <tr><td>usuario-service</td><td>8081</td><td><a href="http://localhost:8081/api/usuarios">http://localhost:8081/api/usuarios</a></td></tr>
+          <tr><td>analitica-service</td><td>8082</td><td><a href="http://localhost:8082/api/analitica">http://localhost:8082/api/analitica</a></td></tr>
+          <tr><td>biblioteca-service</td><td>8083</td><td><a href="http://localhost:8083/api/biblioteca">http://localhost:8083/api/biblioteca</a></td></tr>
+          <tr><td>catalogo-service</td><td>8084</td><td><a href="http://localhost:8084/api/catalogo">http://localhost:8084/api/catalogo</a></td></tr>
+          <tr><td>notificaciones-service</td><td>8085</td><td><a href="http://localhost:8085/api/notificaciones">http://localhost:8085/api/notificaciones</a></td></tr>
+          <tr><td>ofertas-service</td><td>8086</td><td><a href="http://localhost:8086/api/ofertas">http://localhost:8086/api/ofertas</a></td></tr>
+          <tr><td>pagos-service</td><td>8087</td><td><a href="http://localhost:8087/api/pagos">http://localhost:8087/api/pagos</a></td></tr>
+          <tr><td>renta-service</td><td>8088</td><td><a href="http://localhost:8088/api/renta">http://localhost:8088/api/renta</a></td></tr>
+          <tr><td>resenas-service</td><td>8089</td><td><a href="http://localhost:8089/api/resenas">http://localhost:8089/api/resenas</a></td></tr>
+          <tr><td>soporte-service</td><td>8090</td><td><a href="http://localhost:8090/api/soporte">http://localhost:8090/api/soporte</a></td></tr>
+          <tr><td>Eureka Dashboard</td><td>8761</td><td><a href="http://localhost:8761">http://localhost:8761</a></td></tr>
+          <tr><td>Grafana</td><td>3000</td><td><a href="http://localhost:3000">http://localhost:3000</a></td></tr>
+          <tr><td>Prometheus</td><td>9090</td><td><a href="http://localhost:9090">http://localhost:9090</a></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- CREDENCIALES -->
+    <section id="credenciales">
+      <h2>Accesos Demo</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Rol</th><th>Usuario</th><th>Contraseña</th><th>Notas</th></tr>
+          <tr><td><span class="badge badge-red">Administrador</span></td><td><code>admin</code></td><td><code>admin123</code></td><td>Acceso completo al panel admin</td></tr>
+          <tr><td><span class="badge badge-blue">Usuario</span></td><td><code>user1</code></td><td><code>user123</code></td><td>Ana García — tiene 3 juegos en biblioteca</td></tr>
+          <tr><td><span class="badge badge-blue">Usuario</span></td><td><code>user2</code></td><td><code>user123</code></td><td>Miguel Torres — tiene 3 juegos en biblioteca</td></tr>
+          <tr><td><span class="badge badge-orange">Suspendido</span></td><td><code>user3</code></td><td><code>user123</code></td><td>Laura Méndez — cuenta baneada (demo de ban)</td></tr>
+        </table>
+      </div>
+      <div class="info-box">
+        En la pantalla de login hay botones de acceso rápido <strong>"Admin"</strong> y <strong>"Usuario"</strong> que precargan las credenciales automáticamente.
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('section[id]')
+  const links = document.querySelectorAll('.nav-link')
+  window.addEventListener('scroll', () => {
+    let current = ''
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id })
+    links.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current)
+    })
+  })
+</script>
+</body>
+</html>
