@@ -1,0 +1,77 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: servicio-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: usuario-service
+          uri: lb://usuario-service
+          predicates:
+            - Path=/api/usuarios/**
+        - id: analitica-service
+          uri: lb://analitica-service
+          predicates:
+            - Path=/api/analitica/**
+        - id: biblioteca-service
+          uri: lb://biblioteca-service
+          predicates:
+            - Path=/api/biblioteca/**
+        - id: catalogo-service
+          uri: lb://catalogo-service
+          predicates:
+            - Path=/api/catalogo/**
+        - id: notificaciones-service
+          uri: lb://notificaciones-service
+          predicates:
+            - Path=/api/notificaciones/**
+        - id: ofertas-service
+          uri: lb://ofertas-service
+          predicates:
+            - Path=/api/ofertas/**
+        - id: pagos-service
+          uri: lb://pagos-service
+          predicates:
+            - Path=/api/pagos/**
+        - id: renta-service
+          uri: lb://renta-service
+          predicates:
+            - Path=/api/renta/**
+        - id: resenas-service
+          uri: lb://resenas-service
+          predicates:
+            - Path=/api/resenas/**
+        - id: soporte-service
+          uri: lb://soporte-service
+          predicates:
+            - Path=/api/soporte/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  file:
+    name: ../_observabilidad/logs/servicio-gateway.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
