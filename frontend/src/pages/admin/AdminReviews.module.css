@@ -1,0 +1,42 @@
+.header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
+.title { font-size: 24px; font-weight: 800; color: var(--text-primary); }
+.subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+.stat { display: flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 20px; }
+.statVal { font-size: 22px; font-weight: 900; color: var(--accent); }
+.statLabel { font-size: 12px; color: var(--text-muted); }
+
+.filters { display: flex; gap: 12px; margin-bottom: 20px; }
+.search {
+  flex: 1; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 16px; color: var(--text-primary); font-size: 14px; outline: none;
+}
+.search:focus { border-color: var(--accent); }
+.select {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 14px; color: var(--text-primary); font-size: 14px; outline: none;
+}
+.select option { background: var(--bg-card); }
+
+.list { display: flex; flex-direction: column; gap: 10px; }
+
+.card {
+  display: flex; gap: 14px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 14px; transition: background 0.15s;
+}
+.card:hover { background: var(--bg-card-hover); }
+.cardLeft { flex-shrink: 0; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; }
+.cardBody { flex: 1; min-width: 0; }
+.cardTop { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.userName { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.arrow { color: var(--text-muted); font-size: 12px; }
+.gameTag {
+  background: rgba(102,192,244,0.15); color: var(--accent);
+  padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;
+}
+.stars { color: #ffc107; font-size: 13px; margin-left: auto; }
+.date { font-size: 12px; color: var(--text-muted); }
+.reviewText { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+.empty { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; }
