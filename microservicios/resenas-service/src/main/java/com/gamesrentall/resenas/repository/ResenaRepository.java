@@ -1,0 +1,9 @@
+package com.gamesrentall.resenas.repository;
+
+import com.gamesrentall.resenas.entity.Resena;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ResenaRepository extends JpaRepository<Resena, Long> {
+}
