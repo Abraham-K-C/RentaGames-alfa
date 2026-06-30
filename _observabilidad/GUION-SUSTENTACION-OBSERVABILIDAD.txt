@@ -1,0 +1,115 @@
+================================================================================
+  GAMESRENTALL - GUIÓN DE SUSTENTACIÓN: SISTEMA OBSERVABLE
+================================================================================
+
+PRE-REQUISITOS (antes de empezar):
+- Todo el sistema CORRIENDO (usa los scripts 1-, 2-, 3-iniciar-...bat):
+  1. Prometheus (9090), Grafana (3000)
+  2. Eureka Discovery (8761), Gateway (8080)
+  3. Todos los microservicios (8081-8090)
+- Dashboard de Grafana importado y funcionando
+- Alertas de Grafana creadas y activas
+
+================================================================================
+PARTE 1: DEMOSTRACIÓN DEL SISTEMA EN FUNCIONAMIENTO (NORMAL)
+================================================================================
+
+PASO 1.1: Mostrar Eureka
+  - Abrir navegador: http://localhost:8761
+  - Explicar: "Aquí vemos todos los servicios registrados en Eureka"
+  - Mostrar que los 12 servicios están UP
+
+PASO 1.2: Probar conectividad
+  - Ejecutar: _observabilidad/probar-sistema.bat
+  - Explicar: "Estamos haciendo peticiones a todos los servicios via API Gateway"
+  - Mostrar que todas las peticiones responden OK
+
+PASO 1.3: Mostrar Dashboard de Grafana
+  - Abrir navegador: http://localhost:3000 → Ir al dashboard "GamesRentAll Microservicios"
+  - Explicar cada panel:
+    1. Servicios vivos: todos en verde (UP)
+    2. Requests por segundo: tráfico normal
+    3. Errores 5xx: cero
+    4. Memoria JVM: consumo estable
+    5. CPU por servicio: uso normal
+    6. Respuestas 401/403: cero
+
+PASO 1.4: Mostrar logs combinados
+  - Ejecutar: _observabilidad/ver-logs-todos.bat
+  - Explicar: "Aquí vemos los logs en tiempo real de todos los servicios, cada color es un servicio diferente"
+
+================================================================================
+PARTE 2: FALLA CONTROLADA 1 — "Servicio caído" (Critical)
+================================================================================
+
+PASO 2.1: Generar tráfico
+  - Ejecutar (en nueva ventana): _observabilidad/generar-trafico.bat
+  - Explicar: "Estamos generando tráfico continuo para simular uso real"
+
+PASO 2.2: Apagar un servicio crítico
+  - Ejecutar: _observabilidad/apagar-servicio.bat
+  - Seleccionar: [08] renta-service
+  - Explicar: "Acabamos de apagar el servicio de rentas, uno de los más críticos"
+
+PASO 2.3: Verificar la falla (mientras se dispara la alerta)
+  - Volver a Grafana → Alerting → Alert rules
+  - Esperar ~15 segundos
+  - Mostrar: Alerta "Servicio caído" pasa a PENDING y luego a FIRING (rojo)
+  - Explicar: "Prometheus detecta que up == 0 y Grafana dispara la alerta critical"
+
+PASO 2.4: Verificar logs
+  - Volver a la ventana de ver-logs-todos.bat
+  - Explicar: "Aunque el servicio de renta ya no aparece en los logs"
+
+PASO 2.5: Mostrar error en probar-sistema.bat
+  - Ejecutar nuevamente: _observabilidad/probar-sistema.bat
+  - Mostrar que la petición a renta-service falla
+
+================================================================================
+PARTE 3: RECUPERACIÓN DEL SERVICIO
+================================================================================
+
+PASO 3.1: Volver a iniciar renta-service
+  - Ir a la carpeta microservicios/renta-service
+  - Abrir terminal y ejecutar: mvn spring-boot:run
+  - O bien, usar una ventana previamente abierta si la tienes
+
+PASO 3.2: Verificar recuperación
+  - Volver a Grafana Alert rules
+  - Mostrar que la alerta vuelve a Normal (verde)
+  - Explicar: "El servicio se recupera y la alerta se resuelve automáticamente"
+
+================================================================================
+PARTE 4: FALLA CONTROLADA 2 — "Errores HTTP 5xx" (Warning)
+================================================================================
+
+NOTA: Si tus servicios tienen un endpoint /error o /test-error, úsalo.
+Si no, puedes simularlo o omitir esta parte o usar otro tipo de fallo.
+
+OPCIÓN SIMPLE (si no tienes endpoint de error):
+  - Usar la misma alerta del servicio caído, pero explicar la configuración.
+
+================================================================================
+PARTE 5: BÚSQUEDA EN LOGS (Reemplazo de Loki)
+================================================================================
+
+PASO 5.1: Buscar texto en logs
+  - Ejecutar: _observabilidad/buscar-en-logs.bat
+  - Buscar texto: ERROR
+  - Explicar: "Estamos buscando la palabra 'ERROR' en TODOS los logs"
+  - Mostrar resultados con colores por servicio
+
+PASO 5.2: Buscar un servicio específico
+  - Ejecutar: _observabilidad/ver-logs-servicio.bat
+  - Seleccionar un servicio (ej: 08) renta-service
+  - Explicar: "Aquí vemos solo los logs del servicio seleccionado, en tiempo real"
+
+================================================================================
+FIN DE LA DEMOSTRACIÓN
+================================================================================
+¡Felicidades! Has demostrado que tu sistema es observable:
+✅ Monitoreo de métricas (Prometheus + Grafana)
+✅ Alerting (Alert rules en Grafana)
+✅ Logging (alternativa a Loki con PowerShell)
+✅ Recuperación automática
+================================================================================
