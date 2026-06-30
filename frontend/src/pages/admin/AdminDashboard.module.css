@@ -1,0 +1,38 @@
+.root { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 240px; flex-shrink: 0;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh;
+}
+
+.sidebarTop { padding: 24px 20px; border-bottom: 1px solid var(--border); }
+.brand { font-size: 18px; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+.adminBadge { margin-top: 8px; font-size: 12px; color: #ef9a9a; background: rgba(229,57,53,0.15); border: 1px solid rgba(229,57,53,0.3); border-radius: 4px; padding: 3px 8px; display: inline-block; }
+
+.nav { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.navItem {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: var(--radius);
+  border: none; background: transparent;
+  color: var(--text-secondary); font-size: 14px; font-weight: 500;
+  transition: all 0.15s; text-align: left; width: 100%;
+}
+.navItem:hover { background: var(--bg-card); color: var(--text-primary); }
+.navItem.active { background: rgba(102,192,244,0.15); color: var(--accent); }
+
+.sidebarBottom { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+.userInfo { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-card); }
+.userName { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.userRole { font-size: 11px; color: var(--text-muted); }
+.btnLogout {
+  width: 100%; padding: 8px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-secondary); font-size: 13px; transition: all 0.15s;
+}
+.btnLogout:hover { background: rgba(229,57,53,0.15); border-color: rgba(229,57,53,0.4); color: #ef9a9a; }
+
+.main { flex: 1; padding: 32px; overflow-y: auto; background: var(--bg-primary); }
